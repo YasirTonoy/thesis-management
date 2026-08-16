@@ -8,8 +8,8 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Placeholder from './pages/Placeholder';
 import Proposals from './pages/Proposals';
-
-
+import MyThesis from './pages/MyThesis';
+import ResearchGroups from './pages/ResearchGroups';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -60,6 +60,8 @@ const AppRoutes = () => (
 
     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/proposals" element={<ProtectedRoute><Proposals /></ProtectedRoute>} />
+    <Route path="/my-thesis" element={<ProtectedRoute><MyThesis /></ProtectedRoute>} />
+    <Route path="/research-groups" element={<ProtectedRoute><ResearchGroups /></ProtectedRoute>} />
     <Route path="/supervision" element={<ProtectedRoute><Placeholder title="Supervision" /></ProtectedRoute>} />
     <Route path="/milestones" element={<ProtectedRoute><Placeholder title="Milestones" /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><Placeholder title="Profile" /></ProtectedRoute>} />

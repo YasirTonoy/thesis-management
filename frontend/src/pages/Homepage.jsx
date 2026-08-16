@@ -22,7 +22,7 @@ const Homepage = () => {
         <div className="max-w-6xl mx-auto px-6 py-20 md:py-28">
           <div className="max-w-2xl">
             <div className="w-10 h-1 bg-blue-600 mb-6" />
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-5">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-5 text-slate-900">
               Run your thesis from proposal to defense, in one place.
             </h1>
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
@@ -43,14 +43,14 @@ const Homepage = () => {
           <h2 className="text-sm font-bold uppercase tracking-wider text-blue-600 mb-8">Everything on one dashboard</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200 border border-slate-200">
             {[
-              { icon: IconDashboard, name: 'Dashboard', desc: 'One view of where your thesis stands.' },
-              { icon: IconProposal, name: 'Proposals', desc: 'Submit and revise with full history.' },
-              { icon: IconSupervision, name: 'Supervision', desc: 'See your assigned supervisor at a glance.' },
-              { icon: IconMilestone, name: 'Milestones', desc: 'Track every deadline as it approaches.' }
+              { icon: IconDashboard, name: 'My Thesis Workspace', desc: 'Detailed phase progress tracking, phase marks, and supervisor evaluations.' },
+              { icon: IconProposal, name: 'Proposals', desc: 'Submit and revise proposals with full history.' },
+              { icon: IconSupervision, name: 'Literature Review', desc: 'Log research papers, authors, journal publications, and reviews.' },
+              { icon: IconMilestone, name: 'Datasets & Revisions', desc: 'Upload thesis datasets and documents with multi-version revision history.' }
             ].map(({ icon: Icon, name, desc }) => (
               <div key={name} className="bg-white p-6">
                 <Icon className="w-6 h-6 text-blue-600 mb-4" />
-                <h3 className="font-bold mb-1.5">{name}</h3>
+                <h3 className="font-bold mb-1.5 text-slate-900">{name}</h3>
                 <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
               </div>
             ))}
@@ -66,3 +66,5 @@ const Homepage = () => {
 };
 
 export default Homepage;
+
+

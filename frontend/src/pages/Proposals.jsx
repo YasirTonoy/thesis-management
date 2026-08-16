@@ -68,7 +68,7 @@ const ProposalForm = ({ onSubmitted }) => {
   };
 
   return (
-    <div className="border border-slate-200 mb-10">
+    <div className="border border-slate-200 bg-white mb-10 shadow-sm">
       <div className="h-1 bg-blue-600" />
       <form onSubmit={handleSubmit} className="p-6 space-y-5">
         <h2 className="text-lg font-bold text-slate-900">Submit a Proposal</h2>
@@ -82,8 +82,8 @@ const ProposalForm = ({ onSubmitted }) => {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Federated Learning for Low-Resource NLP"
-            className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+            placeholder="e.g. AI-Based Thesis Management System"
+            className="w-full border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
           />
         </div>
 
@@ -96,7 +96,7 @@ const ProposalForm = ({ onSubmitted }) => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Briefly describe the scope and goals of this thesis"
-            className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 resize-none"
+            className="w-full border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 resize-none"
           />
         </div>
 
@@ -108,8 +108,8 @@ const ProposalForm = ({ onSubmitted }) => {
               required
               value={supervisor}
               onChange={(e) => setSupervisor(e.target.value)}
-              placeholder="Dr. Jane Doe"
-              className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+              placeholder="Dr. Sarah Connor"
+              className="w-full border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
             />
           </div>
           <div>
@@ -121,7 +121,7 @@ const ProposalForm = ({ onSubmitted }) => {
               value={coSupervisor}
               onChange={(e) => setCoSupervisor(e.target.value)}
               placeholder="Optional"
-              className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+              className="w-full border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
             />
           </div>
         </div>
@@ -147,7 +147,7 @@ const ProposalForm = ({ onSubmitted }) => {
                   value={s.name}
                   onChange={(e) => updateStudent(i, 'name', e.target.value)}
                   placeholder="Student name"
-                  className="flex-1 border border-slate-300 px-3.5 py-2 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                  className="flex-1 border border-slate-300 px-3.5 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                 />
                 <input
                   type="text"
@@ -155,7 +155,7 @@ const ProposalForm = ({ onSubmitted }) => {
                   value={s.studentId}
                   onChange={(e) => updateStudent(i, 'studentId', e.target.value)}
                   placeholder="Student ID"
-                  className="w-36 border border-slate-300 px-3.5 py-2 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                  className="w-36 border border-slate-300 px-3.5 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                 />
                 {students.length > 1 && (
                   <button type="button" onClick={() => removeStudent(i)} className="px-3 text-slate-400 hover:text-red-600 font-bold text-sm" aria-label="Remove student">
@@ -199,7 +199,7 @@ const ProposalDetailModal = ({ proposal, onClose, onReviewed, canReview }) => {
 
   return (
     <div className="fixed inset-0 bg-slate-900/40 flex items-center justify-center p-4 z-50" onClick={onClose}>
-      <div className="bg-white border border-slate-200 w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white border border-slate-200 w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="h-1 bg-blue-600" />
         <div className="p-6">
           <div className="flex items-start justify-between mb-4">
@@ -215,25 +215,25 @@ const ProposalDetailModal = ({ proposal, onClose, onReviewed, canReview }) => {
           <dl className="grid grid-cols-2 gap-4 text-sm mb-5">
             <div>
               <dt className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Supervisor</dt>
-              <dd className="text-slate-800">{proposal.supervisor}</dd>
+              <dd className="text-slate-800 font-medium">{proposal.supervisor}</dd>
             </div>
             {proposal.coSupervisor && (
               <div>
                 <dt className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Co-Supervisor</dt>
-                <dd className="text-slate-800">{proposal.coSupervisor}</dd>
+                <dd className="text-slate-800 font-medium">{proposal.coSupervisor}</dd>
               </div>
             )}
           </dl>
 
           <div className="mb-5">
             <dt className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
-              Group Members ({proposal.students.length})
+              Group Members ({proposal.students?.length || 0})
             </dt>
             <ul className="border border-slate-200 divide-y divide-slate-200">
-              {proposal.students.map((s, i) => (
+              {proposal.students?.map((s, i) => (
                 <li key={i} className="px-3.5 py-2 flex justify-between text-sm">
                   <span className="text-slate-800">{s.name}</span>
-                  <span className="text-slate-400">{s.studentId}</span>
+                  <span className="text-slate-500 font-mono text-xs">{s.studentId}</span>
                 </li>
               ))}
             </ul>
@@ -242,7 +242,7 @@ const ProposalDetailModal = ({ proposal, onClose, onReviewed, canReview }) => {
           {proposal.status !== 'pending' && proposal.feedback && (
             <div className="mb-5">
               <dt className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Feedback</dt>
-              <p className="text-sm text-slate-600 border-l-2 border-slate-200 pl-3">{proposal.feedback}</p>
+              <p className="text-sm text-slate-600 border-l-2 border-blue-600 pl-3">{proposal.feedback}</p>
             </div>
           )}
 
@@ -255,7 +255,7 @@ const ProposalDetailModal = ({ proposal, onClose, onReviewed, canReview }) => {
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
                 placeholder="Optional note for the group"
-                className="w-full border border-slate-300 px-3.5 py-2.5 text-sm mb-3 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 resize-none"
+                className="w-full border border-slate-300 px-3.5 py-2.5 text-sm mb-3 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 resize-none text-slate-900 bg-white"
               />
               <div className="flex gap-3">
                 <button disabled={busy} onClick={() => decide('approved')} className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-semibold py-2.5 text-sm transition-colors">
@@ -284,7 +284,7 @@ const Proposals = () => {
     setLoading(true);
     try {
       const res = await proposalAPI.getAll();
-      setProposals(res.data.data);
+      setProposals(res.data.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -316,7 +316,7 @@ const Proposals = () => {
       {loading ? (
         <p className="text-sm text-slate-400">Loading…</p>
       ) : proposals.length === 0 ? (
-        <div className="border border-dashed border-slate-300 py-16 text-center">
+        <div className="border border-dashed border-slate-300 py-16 text-center bg-white">
           <p className="text-sm text-slate-500">
             {isReviewer ? 'No proposals submitted yet.' : "You're not part of any thesis group yet — submit a proposal above."}
           </p>
@@ -324,13 +324,13 @@ const Proposals = () => {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-slate-200 border border-slate-200">
           {proposals.map((p) => (
-            <button key={p._id} onClick={() => setSelected(p)} className="bg-white p-5 text-left hover:bg-blue-50/50 transition-colors">
+            <button key={p._id} onClick={() => setSelected(p)} className="bg-white p-5 text-left hover:bg-blue-50/50 transition-colors group">
               <div className="flex items-start justify-between gap-2 mb-3">
-                <h3 className="font-bold text-slate-900 text-sm leading-snug">{p.title}</h3>
+                <h3 className="font-bold text-slate-900 text-sm leading-snug group-hover:text-blue-600 transition-colors">{p.title}</h3>
               </div>
               <StatusBadge status={p.status} />
               <p className="text-xs text-slate-400 mt-3">
-                {p.students.length} student{p.students.length > 1 ? 's' : ''} · {p.supervisor}
+                {p.students?.length || 1} student{(p.students?.length || 1) > 1 ? 's' : ''} · {p.supervisor}
               </p>
             </button>
           ))}
@@ -345,3 +345,5 @@ const Proposals = () => {
 };
 
 export default Proposals;
+
+

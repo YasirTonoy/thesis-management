@@ -48,7 +48,7 @@ const Signup = () => {
           <span className="font-bold text-lg tracking-tight text-slate-900">BRACU ResearchHub</span>
         </Link>
 
-        <div className="border border-slate-200">
+        <div className="border border-slate-200 bg-white shadow-sm">
           <div className="h-1 bg-blue-600" />
           <div className="p-8">
             <h1 className="text-xl font-bold text-slate-900 mb-1">Create your account</h1>
@@ -119,7 +119,7 @@ const Signup = () => {
                   required
                   value={formData.department}
                   onChange={handleChange('department')}
-                  className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors bg-white"
+                  className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors bg-white text-slate-900"
                 >
                   <option value="" disabled>Select your department</option>
                   {DEPARTMENTS.map((d) => (
@@ -149,3 +149,5 @@ const Signup = () => {
 };
 
 export default Signup;
+
+
