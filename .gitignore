@@ -6,3 +6,4 @@ backend/node_modules/
 dist/
 build/
 .DS_Store
+thesis-management/
