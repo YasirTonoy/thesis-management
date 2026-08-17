@@ -76,3 +76,22 @@ export const materialAPI = {
 };
 
 export default api;
+
+export const researchGroupAPI = {
+  create: (data) => api.post('/research-groups', data),
+  getAll: () => api.get('/research-groups'),
+  getById: (id) => api.get(`/research-groups/${id}`),
+  join: (id) => api.post(`/research-groups/${id}/join`),
+  leave: (id) => api.post(`/research-groups/${id}/leave`),
+  createPost: (id, data) => api.post(`/research-groups/${id}/posts`, data),
+  getPosts: (id) => api.get(`/research-groups/${id}/posts`),
+  addReply: (id, postId, data) => api.post(`/research-groups/${id}/posts/${postId}/replies`, data)
+};
+
+export const meetingAPI = {
+  request: (data) => api.post('/meetings', data),
+  getAll: (params) => api.get('/meetings', { params }),
+  respond: (id, data) => api.put(`/meetings/${id}/respond`, data),
+  cancel: (id) => api.put(`/meetings/${id}/cancel`),
+  complete: (id, data) => api.put(`/meetings/${id}/complete`, data)
+};

@@ -25,6 +25,8 @@ app.use('/api/notices', require('./routes/noticeRoutes'));
 app.use('/api/progress-reports', require('./routes/progressReportRoutes'));
 app.use('/api/literature-reviews', require('./routes/literatureReviewRoutes'));
 app.use('/api/materials', require('./routes/materialRoutes'));
+app.use('/api/research-groups', require('./routes/researchGroupRoutes'));
+app.use('/api/meetings', require('./routes/meetingRoutes'));
 
 app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.method} ${req.originalUrl} not found` });

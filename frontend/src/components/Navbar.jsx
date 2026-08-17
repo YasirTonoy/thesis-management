@@ -6,6 +6,7 @@ import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: IconDashboard },
   { to: '/proposals', label: 'Proposals', icon: IconProposal },
+  { to: '/research-groups', label: 'Research Groups', icon: IconSupervision },
   { to: '/notices', label: 'Notices', icon: IconNotice },
   { to: '/supervision', label: 'Supervision', icon: IconSupervision },
   { to: '/milestones', label: 'Milestones', icon: IconMilestone }
