@@ -24,7 +24,7 @@ const AssignSupervisorForm = ({ onSubmit, type = 'assign', supervisions = [] }) 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
+        <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
           {type === 'reassign' ? 'Active Student User ID' : 'Student MongoDB User ID'}
         </label>
         <input
@@ -32,32 +32,32 @@ const AssignSupervisorForm = ({ onSubmit, type = 'assign', supervisions = [] }) 
           value={formData.studentId}
           onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
           placeholder="e.g., 60d5ec49f1b2c81234567890"
-          className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition text-slate-100 placeholder:text-slate-600"
+          className="w-full border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition placeholder:text-slate-400"
           required
         />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">Supervisor MongoDB User ID</label>
+        <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Supervisor MongoDB User ID</label>
         <input
           type="text"
           value={formData.supervisorId}
           onChange={(e) => setFormData({ ...formData, supervisorId: e.target.value })}
           placeholder="e.g., 60d5ec49f1b2c81234567891"
-          className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition text-slate-100 placeholder:text-slate-600"
+          className="w-full border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition placeholder:text-slate-400"
           required
         />
       </div>
 
       {type === 'reassign' && (
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">Reassignment Reason</label>
+          <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Reassignment Reason</label>
           <textarea
             value={formData.reassignmentReason}
             onChange={(e) => setFormData({ ...formData, reassignmentReason: e.target.value })}
             placeholder="State rationale for supervisor reassignment"
             rows="3"
-            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition text-slate-100 placeholder:text-slate-600"
+            className="w-full border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 bg-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition placeholder:text-slate-400 resize-none"
           />
         </div>
       )}
@@ -65,12 +65,13 @@ const AssignSupervisorForm = ({ onSubmit, type = 'assign', supervisions = [] }) 
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-blue-500/20 disabled:opacity-50"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 transition-colors disabled:opacity-50 text-sm shadow-sm"
       >
-        {loading ? 'Processing Request...' : type === 'reassign' ? 'Reassign Supervisor 🔄' : 'Assign Supervisor 🤝'}
+        {loading ? 'Processing...' : type === 'reassign' ? 'Reassign Supervisor' : 'Assign Supervisor'}
       </button>
     </form>
   );
 };
 
 export default AssignSupervisorForm;
+
