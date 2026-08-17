@@ -19,7 +19,8 @@ api.interceptors.request.use(
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
-  me: () => api.get('/auth/me')
+  me: () => api.get('/auth/me'),
+  getSupervisors: () => api.get('/auth/supervisors')
 };
 
 export const proposalAPI = {
@@ -44,6 +45,34 @@ export const milestoneAPI = {
   review: (id, data) => api.put(`/milestones/${id}/review`, data),
   update: (id, data) => api.put(`/milestones/${id}`, data),
   delete: (id) => api.delete(`/milestones/${id}`)
+};
+
+export const noticeAPI = {
+  create: (data) => api.post('/notices', data),
+  mine: () => api.get('/notices/mine'),
+  bySupervisor: (supervisorId) => api.get(`/notices/by-supervisor/${supervisorId}`)
+};
+
+// ---- Feature: Progress Reports ----
+export const progressReportAPI = {
+  // formData must be a FormData instance (fields: proposalId, phase, description, document?)
+  submit: (formData) => api.post('/progress-reports', formData),
+  getAll: (proposalId) => api.get('/progress-reports', { params: { proposalId } })
+};
+
+// ---- Feature: Literature Review ----
+export const literatureReviewAPI = {
+  submit: (data) => api.post('/literature-reviews', data),
+  getAll: (proposalId) => api.get('/literature-reviews', { params: { proposalId } })
+};
+
+// ---- Feature: Thesis Materials / Datasets ----
+export const materialAPI = {
+  // formData fields: proposalId, title, description, file
+  create: (formData) => api.post('/materials', formData),
+  // formData fields: note, file
+  addVersion: (materialId, formData) => api.post(`/materials/${materialId}/versions`, formData),
+  getAll: (proposalId) => api.get('/materials', { params: { proposalId } })
 };
 
 export default api;

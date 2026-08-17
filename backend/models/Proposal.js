@@ -12,8 +12,8 @@ const proposalSchema = new mongoose.Schema(
   {
     title: { type: String, required: [true, 'Proposal title is required'], trim: true },
     description: { type: String, default: '', trim: true },
-    supervisor: { type: String, required: [true, 'Supervisor name is required'], trim: true },
-    coSupervisor: { type: String, default: '', trim: true },
+    supervisor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: [true, 'Supervisor is required'] },
+    coSupervisor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     students: {
       type: [groupMemberSchema],
       validate: {

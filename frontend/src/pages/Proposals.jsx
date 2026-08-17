@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { proposalAPI } from '../api';
+import { proposalAPI, authAPI } from '../api';
+import { Link } from 'react-router-dom';
 
 const STATUS_STYLES = {
   pending: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -16,12 +17,12 @@ const StatusBadge = ({ status }) => (
 
 const emptyStudentRow = (name = '', studentId = '') => ({ name, studentId });
 
-const ProposalForm = ({ onSubmitted }) => {
+const ProposalForm = ({ supervisors, onSubmitted }) => {
   const { user } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [supervisor, setSupervisor] = useState('');
-  const [coSupervisor, setCoSupervisor] = useState('');
+  const [supervisorId, setSupervisorId] = useState('');
+  const [coSupervisorId, setCoSupervisorId] = useState('');
   const [students, setStudents] = useState([emptyStudentRow(user?.name, user?.studentId)]);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -50,14 +51,22 @@ const ProposalForm = ({ onSubmitted }) => {
         return;
       }
     }
+    if (!supervisorId) {
+      setError('Please select a supervisor');
+      return;
+    }
 
     setSubmitting(true);
     try {
-      await proposalAPI.submit({ title, description, supervisor, coSupervisor, students });
+      await proposalAPI.submit({
+        title, description, supervisorId,
+        coSupervisorId: coSupervisorId || undefined,
+        students
+      });
       setTitle('');
       setDescription('');
-      setSupervisor('');
-      setCoSupervisor('');
+      setSupervisorId('');
+      setCoSupervisorId('');
       setStudents([emptyStudentRow(user?.name, user?.studentId)]);
       onSubmitted();
     } catch (err) {
@@ -103,26 +112,32 @@ const ProposalForm = ({ onSubmitted }) => {
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Supervisor</label>
-            <input
-              type="text"
+            <select
               required
-              value={supervisor}
-              onChange={(e) => setSupervisor(e.target.value)}
-              placeholder="Dr. Jane Doe"
-              className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
-            />
+              value={supervisorId}
+              onChange={(e) => setSupervisorId(e.target.value)}
+              className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-white"
+            >
+              <option value="" disabled>Select a supervisor</option>
+              {supervisors.map((s) => (
+                <option key={s._id} value={s._id}>{s.name} — {s.department}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">
               Co-Supervisor <span className="normal-case font-medium text-slate-400">(if any)</span>
             </label>
-            <input
-              type="text"
-              value={coSupervisor}
-              onChange={(e) => setCoSupervisor(e.target.value)}
-              placeholder="Optional"
-              className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
-            />
+            <select
+              value={coSupervisorId}
+              onChange={(e) => setCoSupervisorId(e.target.value)}
+              className="w-full border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-white"
+            >
+              <option value="">None</option>
+              {supervisors.filter((s) => s._id !== supervisorId).map((s) => (
+                <option key={s._id} value={s._id}>{s.name} — {s.department}</option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -205,7 +220,14 @@ const ProposalDetailModal = ({ proposal, onClose, onReviewed, canReview }) => {
           <div className="flex items-start justify-between mb-4">
             <div>
               <h2 className="text-lg font-bold text-slate-900 mb-1.5">{proposal.title}</h2>
-              <StatusBadge status={proposal.status} />
+              <div className="flex items-center gap-2 flex-wrap">
+                <StatusBadge status={proposal.status} />
+                {proposal.thesisId && (
+                  <span className="inline-block text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1">
+                    {proposal.thesisId}
+                  </span>
+                )}
+              </div>
             </div>
             <button onClick={onClose} className="text-slate-400 hover:text-slate-700 text-xl leading-none">×</button>
           </div>
@@ -215,12 +237,12 @@ const ProposalDetailModal = ({ proposal, onClose, onReviewed, canReview }) => {
           <dl className="grid grid-cols-2 gap-4 text-sm mb-5">
             <div>
               <dt className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Supervisor</dt>
-              <dd className="text-slate-800">{proposal.supervisor}</dd>
+              <dd className="text-slate-800">{proposal.supervisor?.name}</dd>
             </div>
             {proposal.coSupervisor && (
               <div>
                 <dt className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Co-Supervisor</dt>
-                <dd className="text-slate-800">{proposal.coSupervisor}</dd>
+                <dd className="text-slate-800">{proposal.coSupervisor?.name}</dd>
               </div>
             )}
           </dl>
@@ -243,6 +265,17 @@ const ProposalDetailModal = ({ proposal, onClose, onReviewed, canReview }) => {
             <div className="mb-5">
               <dt className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Feedback</dt>
               <p className="text-sm text-slate-600 border-l-2 border-slate-200 pl-3">{proposal.feedback}</p>
+            </div>
+          )}
+
+          {proposal.status === 'approved' && (
+            <div className="mb-5">
+              <Link
+                to={`/my-thesis/${proposal._id}`}
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2.5 transition-colors"
+              >
+                📖 Go to My Thesis
+              </Link>
             </div>
           )}
 
@@ -276,6 +309,7 @@ const ProposalDetailModal = ({ proposal, onClose, onReviewed, canReview }) => {
 const Proposals = () => {
   const { user } = useAuth();
   const [proposals, setProposals] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const isReviewer = user?.role === 'supervisor' || user?.role === 'admin';
@@ -292,10 +326,20 @@ const Proposals = () => {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    if (!isReviewer) {
+      authAPI.getSupervisors().then((res) => setSupervisors(res.data.data)).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleClose = () => setSelected(null);
   const handleReviewed = () => { setSelected(null); load(); };
+
+  const heading = isReviewer
+    ? (user?.role === 'admin' ? 'All Proposals' : 'Thesis Under You')
+    : 'Your Proposal Status';
 
   return (
     <div>
@@ -307,18 +351,16 @@ const Proposals = () => {
         </p>
       </div>
 
-      {!isReviewer && <ProposalForm onSubmitted={load} />}
+      {!isReviewer && <ProposalForm supervisors={supervisors} onSubmitted={load} />}
 
-      <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
-        {isReviewer ? 'All Proposals' : 'Your Proposal Status'}
-      </h2>
+      <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">{heading}</h2>
 
       {loading ? (
         <p className="text-sm text-slate-400">Loading…</p>
       ) : proposals.length === 0 ? (
         <div className="border border-dashed border-slate-300 py-16 text-center">
           <p className="text-sm text-slate-500">
-            {isReviewer ? 'No proposals submitted yet.' : "You're not part of any thesis group yet — submit a proposal above."}
+            {isReviewer ? 'No proposals assigned to you yet.' : "You're not part of any thesis group yet — submit a proposal above."}
           </p>
         </div>
       ) : (
@@ -328,10 +370,13 @@ const Proposals = () => {
               <div className="flex items-start justify-between gap-2 mb-3">
                 <h3 className="font-bold text-slate-900 text-sm leading-snug">{p.title}</h3>
               </div>
-              <StatusBadge status={p.status} />
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <StatusBadge status={p.status} />
+              </div>
               <p className="text-xs text-slate-400 mt-3">
-                {p.students.length} student{p.students.length > 1 ? 's' : ''} · {p.supervisor}
+                {p.students.length} student{p.students.length > 1 ? 's' : ''} · {p.supervisor?.name}
               </p>
+              {p.thesisId && <p className="text-xs text-blue-600 font-bold mt-1">{p.thesisId}</p>}
             </button>
           ))}
         </div>

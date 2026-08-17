@@ -6,15 +6,19 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
+const ALLOWED_SIGNUP_ROLES = ['student', 'supervisor'];
+
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, department, studentId } = req.body;
-    // Public signup always creates a student account — supervisor/admin
-    // accounts are provisioned separately, never via user-supplied input.
-    const role = 'student';
+    const { name, email, password, department, studentId, role } = req.body;
+    const finalRole = ALLOWED_SIGNUP_ROLES.includes(role) ? role : 'student';
 
     if (!name || !email || !password || !department) {
       return res.status(400).json({ success: false, message: 'Name, email, password, and department are required' });
+    }
+
+    if (finalRole === 'student' && !studentId) {
+      return res.status(400).json({ success: false, message: 'Student ID is required for a student account' });
     }
 
     const emailExists = await User.findOne({ email: email.toLowerCase() });
@@ -22,7 +26,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ success: false, message: 'An account with this email already exists' });
     }
 
-    if (studentId) {
+    if (finalRole === 'student' && studentId) {
       const idExists = await User.findOne({ studentId });
       if (idExists) {
         return res.status(400).json({ success: false, message: 'This Student ID is already registered' });
@@ -34,8 +38,8 @@ const registerUser = async (req, res) => {
 
     const user = await User.create({
       name, email, password: hashedPassword, department,
-      studentId: studentId || undefined,
-      role: role || 'student'
+      studentId: finalRole === 'student' ? studentId : undefined,
+      role: finalRole
     });
 
     res.status(201).json({
@@ -94,4 +98,13 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getMe };
+const getSupervisors = async (req, res) => {
+  try {
+    const supervisors = await User.find({ role: 'supervisor' }).select('name email department').sort({ name: 1 });
+    res.json({ success: true, data: supervisors });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getMe, getSupervisors };

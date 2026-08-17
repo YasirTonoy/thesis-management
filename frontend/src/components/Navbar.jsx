@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconLogout } from './icons';
+import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout } from './icons';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: IconDashboard },
   { to: '/proposals', label: 'Proposals', icon: IconProposal },
+  { to: '/notices', label: 'Notices', icon: IconNotice },
   { to: '/supervision', label: 'Supervision', icon: IconSupervision },
   { to: '/milestones', label: 'Milestones', icon: IconMilestone }
 ];

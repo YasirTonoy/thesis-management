@@ -7,3 +7,4 @@ dist/
 build/
 .DS_Store
 thesis-management/
+backend/uploads/

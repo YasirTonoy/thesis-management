@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const ProposalList = ({ proposals, onReview }) => {
@@ -58,6 +59,17 @@ const ProposalList = ({ proposals, onReview }) => {
             <div className="text-[11px] text-slate-500 flex justify-between items-center pt-2 border-t border-slate-800/80">
               <span>📅 {new Date(proposal.createdAt || Date.now()).toLocaleDateString()}</span>
             </div>
+
+            {proposal.status === 'approved' && (
+              <div className="pt-2">
+                <Link
+                  to={`/my-thesis/${proposal._id}`}
+                  className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2 rounded-xl transition shadow-md shadow-blue-600/20"
+                >
+                  📖 My Thesis
+                </Link>
+              </div>
+            )}
             
             {isSupervisor && proposal.status === 'pending' && onReview && (
               <div className="pt-3 border-t border-slate-800/80 flex flex-wrap gap-2">
