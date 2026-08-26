@@ -151,12 +151,38 @@ const MyThesis = () => {
           )}
           <span className="capitalize">Status: <span className="text-emerald-600 font-medium">{proposal.status}</span></span>
         </div>
-        <Link
-          to={`/my-thesis/${id}/literature-review`}
-          className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
-        >
-          Literature Review →
-        </Link>
+        <div className="flex flex-wrap gap-3 mt-4">
+          <Link
+            to={`/my-thesis/${id}/literature-review`}
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+          >
+            Literature Review →
+          </Link>
+          <Link
+            to={`/my-thesis/${id}/versions`}
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+          >
+            Thesis Versions →
+          </Link>
+          <Link
+            to={`/my-thesis/${id}/plagiarism`}
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+          >
+            Plagiarism Reports →
+          </Link>
+          <Link
+            to={`/my-thesis/${id}/final-submission`}
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+          >
+            Final Submission →
+          </Link>
+          <Link
+            to={`/my-thesis/${id}/defense`}
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+          >
+            Defense Schedule →
+          </Link>
+        </div>
       </div>
 
       <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">

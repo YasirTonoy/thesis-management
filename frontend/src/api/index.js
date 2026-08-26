@@ -75,6 +75,42 @@ export const materialAPI = {
   getAll: (proposalId) => api.get('/materials', { params: { proposalId } })
 };
 
+// ---- Feature: Thesis Version Control & Revision History ----
+export const thesisVersionAPI = {
+  // formData fields: proposalId, changeSummary, file
+  upload: (formData) => api.post('/thesis-versions', formData),
+  getAll: (proposalId) => api.get('/thesis-versions', { params: { proposalId } }),
+  review: (versionId, data) => api.put(`/thesis-versions/${versionId}/review`, data),
+  restore: (versionId) => api.put(`/thesis-versions/${versionId}/restore`)
+};
+
+// ---- Feature: Plagiarism Reports ----
+export const plagiarismReportAPI = {
+  // formData fields: proposalId, similarityPercentage, toolName, notes, thesisVersionId, file
+  upload: (formData) => api.post('/plagiarism-reports', formData),
+  getAll: (proposalId) => api.get('/plagiarism-reports', { params: { proposalId } }),
+  review: (reportId, data) => api.put(`/plagiarism-reports/${reportId}/review`, data),
+  delete: (reportId) => api.delete(`/plagiarism-reports/${reportId}`)
+};
+
+// ---- Feature: Final Thesis Submission ----
+export const finalSubmissionAPI = {
+  submit: (data) => api.post('/final-submissions', data),
+  get: (proposalId) => api.get('/final-submissions', { params: { proposalId } }),
+  review: (submissionId, data) => api.put(`/final-submissions/${submissionId}/review`, data),
+  downloadPdf: (submissionId) => api.get(`/final-submissions/${submissionId}/pdf`, { responseType: 'blob' })
+};
+
+// ---- Feature: Defense Scheduling & Examiner Assignment ----
+export const defenseAPI = {
+  schedule: (data) => api.post('/defenses', data),
+  get: (proposalId) => api.get('/defenses', { params: { proposalId } }),
+  mine: () => api.get('/defenses/mine'),
+  update: (defenseId, data) => api.put(`/defenses/${defenseId}`, data),
+  respond: (defenseId, data) => api.put(`/defenses/${defenseId}/respond`, data),
+  recordResult: (defenseId, data) => api.put(`/defenses/${defenseId}/result`, data)
+};
+
 export default api;
 
 export const researchGroupAPI = {
