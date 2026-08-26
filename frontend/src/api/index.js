@@ -84,6 +84,15 @@ export const thesisVersionAPI = {
   restore: (versionId) => api.put(`/thesis-versions/${versionId}/restore`)
 };
 
+// ---- Feature: Plagiarism Reports ----
+export const plagiarismReportAPI = {
+  // formData fields: proposalId, similarityPercentage, toolName, notes, thesisVersionId, file
+  upload: (formData) => api.post('/plagiarism-reports', formData),
+  getAll: (proposalId) => api.get('/plagiarism-reports', { params: { proposalId } }),
+  review: (reportId, data) => api.put(`/plagiarism-reports/${reportId}/review`, data),
+  delete: (reportId) => api.delete(`/plagiarism-reports/${reportId}`)
+};
+
 export default api;
 
 export const researchGroupAPI = {
