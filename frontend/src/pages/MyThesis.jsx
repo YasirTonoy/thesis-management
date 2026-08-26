@@ -176,6 +176,12 @@ const MyThesis = () => {
           >
             Final Submission →
           </Link>
+          <Link
+            to={`/my-thesis/${id}/defense`}
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+          >
+            Defense Schedule →
+          </Link>
         </div>
       </div>
 

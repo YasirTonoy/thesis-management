@@ -101,6 +101,16 @@ export const finalSubmissionAPI = {
   downloadPdf: (submissionId) => api.get(`/final-submissions/${submissionId}/pdf`, { responseType: 'blob' })
 };
 
+// ---- Feature: Defense Scheduling & Examiner Assignment ----
+export const defenseAPI = {
+  schedule: (data) => api.post('/defenses', data),
+  get: (proposalId) => api.get('/defenses', { params: { proposalId } }),
+  mine: () => api.get('/defenses/mine'),
+  update: (defenseId, data) => api.put(`/defenses/${defenseId}`, data),
+  respond: (defenseId, data) => api.put(`/defenses/${defenseId}/respond`, data),
+  recordResult: (defenseId, data) => api.put(`/defenses/${defenseId}/result`, data)
+};
+
 export default api;
 
 export const researchGroupAPI = {
