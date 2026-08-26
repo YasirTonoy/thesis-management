@@ -93,6 +93,14 @@ export const plagiarismReportAPI = {
   delete: (reportId) => api.delete(`/plagiarism-reports/${reportId}`)
 };
 
+// ---- Feature: Final Thesis Submission ----
+export const finalSubmissionAPI = {
+  submit: (data) => api.post('/final-submissions', data),
+  get: (proposalId) => api.get('/final-submissions', { params: { proposalId } }),
+  review: (submissionId, data) => api.put(`/final-submissions/${submissionId}/review`, data),
+  downloadPdf: (submissionId) => api.get(`/final-submissions/${submissionId}/pdf`, { responseType: 'blob' })
+};
+
 export default api;
 
 export const researchGroupAPI = {
