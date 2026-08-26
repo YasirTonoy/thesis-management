@@ -75,6 +75,15 @@ export const materialAPI = {
   getAll: (proposalId) => api.get('/materials', { params: { proposalId } })
 };
 
+// ---- Feature: Thesis Version Control & Revision History ----
+export const thesisVersionAPI = {
+  // formData fields: proposalId, changeSummary, file
+  upload: (formData) => api.post('/thesis-versions', formData),
+  getAll: (proposalId) => api.get('/thesis-versions', { params: { proposalId } }),
+  review: (versionId, data) => api.put(`/thesis-versions/${versionId}/review`, data),
+  restore: (versionId) => api.put(`/thesis-versions/${versionId}/restore`)
+};
+
 export default api;
 
 export const researchGroupAPI = {
