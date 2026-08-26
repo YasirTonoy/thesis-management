@@ -164,6 +164,12 @@ const MyThesis = () => {
           >
             Thesis Versions →
           </Link>
+          <Link
+            to={`/my-thesis/${id}/plagiarism`}
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+          >
+            Plagiarism Reports →
+          </Link>
         </div>
       </div>
 
