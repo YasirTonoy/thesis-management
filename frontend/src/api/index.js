@@ -111,6 +111,16 @@ export const defenseAPI = {
   recordResult: (defenseId, data) => api.put(`/defenses/${defenseId}/result`, data)
 };
 
+// ---- Feature: Deadline Reminders & Notifications ----
+export const notificationAPI = {
+  getAll: (params) => api.get('/notifications', { params }),
+  unreadCount: () => api.get('/notifications/unread-count'),
+  markRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllRead: () => api.put('/notifications/read-all'),
+  delete: (id) => api.delete(`/notifications/${id}`),
+  sweep: () => api.post('/notifications/sweep')
+};
+
 export default api;
 
 export const researchGroupAPI = {

@@ -54,3 +54,12 @@ export const IconNotice = (props) => (
     <path d="M13.73 21a2 2 0 0 1-3.46 0" />
   </svg>
 );
+
+export const IconAlarm = (props) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+    <circle cx="12" cy="13" r="8" />
+    <path d="M12 9v4l2.5 2" />
+    <path d="M5 3L2.5 5.5" />
+    <path d="M19 3l2.5 2.5" />
+  </svg>
+);

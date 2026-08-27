@@ -1,7 +1,10 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout } from './icons';
+import { notificationAPI } from '../api';
+import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconAlarm } from './icons';
+
+const UNREAD_POLL_MS = 60000;
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: IconDashboard },
@@ -14,6 +17,29 @@ const NAV_ITEMS = [
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return undefined;
+
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await notificationAPI.unreadCount();
+        if (active) setUnreadCount(res.data.unreadCount || 0);
+      } catch {
+        // A failed poll should never break the navbar.
+      }
+    };
+
+    load();
+    const timer = setInterval(load, UNREAD_POLL_MS);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [user, location.pathname]);
 
   return (
     <header className="border-b border-slate-200 bg-white sticky top-0 z-40">
@@ -41,6 +67,20 @@ const Navbar = () => {
         </nav>
 
         <div className="flex items-center gap-3">
+          <NavLink
+            to="/notifications"
+            title="Deadline reminders"
+            className={({ isActive }) =>
+              `relative flex items-center p-2 transition-colors ${isActive ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`
+            }
+          >
+            <IconAlarm className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </NavLink>
           <NavLink
             to="/profile"
             className={({ isActive }) =>

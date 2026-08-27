@@ -16,6 +16,7 @@ import ThesisVersions from './pages/ThesisVersions';
 import PlagiarismReports from './pages/PlagiarismReports';
 import FinalSubmission from './pages/FinalSubmission';
 import DefenseSchedule from './pages/DefenseSchedule';
+import Notifications from './pages/Notifications';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -67,6 +68,7 @@ const AppRoutes = () => (
     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/proposals" element={<ProtectedRoute><Proposals /></ProtectedRoute>} />
     <Route path="/notices" element={<ProtectedRoute><Notices /></ProtectedRoute>} />
+    <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
     <Route path="/research-groups" element={<ProtectedRoute><ResearchGroups /></ProtectedRoute>} />
     <Route path="/supervision" element={<ProtectedRoute><Placeholder title="Supervision" /></ProtectedRoute>} />
     <Route path="/milestones" element={<ProtectedRoute><Placeholder title="Milestones" /></ProtectedRoute>} />
