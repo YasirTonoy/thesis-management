@@ -16,6 +16,8 @@ import ThesisVersions from './pages/ThesisVersions';
 import PlagiarismReports from './pages/PlagiarismReports';
 import FinalSubmission from './pages/FinalSubmission';
 import DefenseSchedule from './pages/DefenseSchedule';
+import Publications from './pages/Publications';
+import ConferenceParticipation from './pages/ConferenceParticipation';
 import EquipmentBooking from './pages/EquipmentBooking';
 
 class ErrorBoundary extends Component {
@@ -80,7 +82,8 @@ const AppRoutes = () => (
     <Route path="/my-thesis/:id/plagiarism" element={<ProtectedRoute><PlagiarismReports /></ProtectedRoute>} />
     <Route path="/my-thesis/:id/final-submission" element={<ProtectedRoute><FinalSubmission /></ProtectedRoute>} />
     <Route path="/my-thesis/:id/defense" element={<ProtectedRoute><DefenseSchedule /></ProtectedRoute>} />
-
+    <Route path="/my-thesis/:id/publications" element={<ProtectedRoute><Publications /></ProtectedRoute>} />
+    <Route path="/my-thesis/:id/conferences" element={<ProtectedRoute><ConferenceParticipation /></ProtectedRoute>} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 );

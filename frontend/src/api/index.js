@@ -74,7 +74,15 @@ export const materialAPI = {
   addVersion: (materialId, formData) => api.post(`/materials/${materialId}/versions`, formData),
   getAll: (proposalId) => api.get('/materials', { params: { proposalId } })
 };
+export const publicationAPI = {
+  submit: (formData) => api.post('/publications', formData),
+  getAll: (proposalId) => api.get('/publications', { params: { proposalId } })
+};
 
+export const conferenceAPI = {
+  submit: (formData) => api.post('/conferences', formData),
+  getAll: (proposalId) => api.get('/conferences', { params: { proposalId } })
+};
 // ---- Feature: Thesis Version Control & Revision History ----
 export const thesisVersionAPI = {
   // formData fields: proposalId, changeSummary, file

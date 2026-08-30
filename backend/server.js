@@ -25,6 +25,8 @@ app.use('/api/notices', require('./routes/noticeRoutes'));
 app.use('/api/progress-reports', require('./routes/progressReportRoutes'));
 app.use('/api/literature-reviews', require('./routes/literatureReviewRoutes'));
 app.use('/api/materials', require('./routes/materialRoutes'));
+app.use('/api/publications', require('./routes/publicationRoutes'));
+app.use('/api/conferences', require('./routes/conferenceRoutes'));
 app.use('/api/thesis-versions', require('./routes/thesisVersionRoutes'));
 app.use('/api/plagiarism-reports', require('./routes/plagiarismReportRoutes'));
 app.use('/api/final-submissions', require('./routes/finalSubmissionRoutes'));
