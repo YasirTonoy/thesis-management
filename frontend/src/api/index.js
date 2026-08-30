@@ -111,8 +111,6 @@ export const defenseAPI = {
   recordResult: (defenseId, data) => api.put(`/defenses/${defenseId}/result`, data)
 };
 
-export default api;
-
 export const researchGroupAPI = {
   create: (data) => api.post('/research-groups', data),
   getAll: () => api.get('/research-groups'),
@@ -131,3 +129,23 @@ export const meetingAPI = {
   cancel: (id) => api.put(`/meetings/${id}/cancel`),
   complete: (id, data) => api.put(`/meetings/${id}/complete`, data)
 };
+
+export const labResourceAPI = {
+  getAll: (params) => api.get('/lab-resources', { params }),
+  getById: (id) => api.get(`/lab-resources/${id}`),
+  create: (data) => api.post('/lab-resources', data),
+  update: (id, data) => api.put(`/lab-resources/${id}`, data),
+  delete: (id) => api.delete(`/lab-resources/${id}`),
+  getAnalytics: () => api.get('/lab-resources/analytics/stats')
+};
+
+export const resourceBookingAPI = {
+  getAll: (params) => api.get('/resource-bookings', { params }),
+  create: (data) => api.post('/resource-bookings', data),
+  respond: (id, data) => api.put(`/resource-bookings/${id}/respond`, data),
+  checkIn: (id) => api.put(`/resource-bookings/${id}/check-in`),
+  checkOut: (id, data) => api.put(`/resource-bookings/${id}/check-out`, data),
+  cancel: (id, data) => api.put(`/resource-bookings/${id}/cancel`, data)
+};
+
+export default api;

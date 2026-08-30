@@ -5,6 +5,9 @@ backend/node_modules/
 dist/
 build/
 .DS_Store
+.env
+*.env
+backend/.env
 thesis-management/
 backend/uploads/
 frontend/dist/
