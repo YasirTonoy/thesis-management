@@ -75,7 +75,41 @@ export const materialAPI = {
   getAll: (proposalId) => api.get('/materials', { params: { proposalId } })
 };
 
-export default api;
+// ---- Feature: Thesis Version Control & Revision History ----
+export const thesisVersionAPI = {
+  // formData fields: proposalId, changeSummary, file
+  upload: (formData) => api.post('/thesis-versions', formData),
+  getAll: (proposalId) => api.get('/thesis-versions', { params: { proposalId } }),
+  review: (versionId, data) => api.put(`/thesis-versions/${versionId}/review`, data),
+  restore: (versionId) => api.put(`/thesis-versions/${versionId}/restore`)
+};
+
+// ---- Feature: Plagiarism Reports ----
+export const plagiarismReportAPI = {
+  // formData fields: proposalId, similarityPercentage, toolName, notes, thesisVersionId, file
+  upload: (formData) => api.post('/plagiarism-reports', formData),
+  getAll: (proposalId) => api.get('/plagiarism-reports', { params: { proposalId } }),
+  review: (reportId, data) => api.put(`/plagiarism-reports/${reportId}/review`, data),
+  delete: (reportId) => api.delete(`/plagiarism-reports/${reportId}`)
+};
+
+// ---- Feature: Final Thesis Submission ----
+export const finalSubmissionAPI = {
+  submit: (data) => api.post('/final-submissions', data),
+  get: (proposalId) => api.get('/final-submissions', { params: { proposalId } }),
+  review: (submissionId, data) => api.put(`/final-submissions/${submissionId}/review`, data),
+  downloadPdf: (submissionId) => api.get(`/final-submissions/${submissionId}/pdf`, { responseType: 'blob' })
+};
+
+// ---- Feature: Defense Scheduling & Examiner Assignment ----
+export const defenseAPI = {
+  schedule: (data) => api.post('/defenses', data),
+  get: (proposalId) => api.get('/defenses', { params: { proposalId } }),
+  mine: () => api.get('/defenses/mine'),
+  update: (defenseId, data) => api.put(`/defenses/${defenseId}`, data),
+  respond: (defenseId, data) => api.put(`/defenses/${defenseId}/respond`, data),
+  recordResult: (defenseId, data) => api.put(`/defenses/${defenseId}/result`, data)
+};
 
 export const researchGroupAPI = {
   create: (data) => api.post('/research-groups', data),
@@ -95,3 +129,23 @@ export const meetingAPI = {
   cancel: (id) => api.put(`/meetings/${id}/cancel`),
   complete: (id, data) => api.put(`/meetings/${id}/complete`, data)
 };
+
+export const labResourceAPI = {
+  getAll: (params) => api.get('/lab-resources', { params }),
+  getById: (id) => api.get(`/lab-resources/${id}`),
+  create: (data) => api.post('/lab-resources', data),
+  update: (id, data) => api.put(`/lab-resources/${id}`, data),
+  delete: (id) => api.delete(`/lab-resources/${id}`),
+  getAnalytics: () => api.get('/lab-resources/analytics/stats')
+};
+
+export const resourceBookingAPI = {
+  getAll: (params) => api.get('/resource-bookings', { params }),
+  create: (data) => api.post('/resource-bookings', data),
+  respond: (id, data) => api.put(`/resource-bookings/${id}/respond`, data),
+  checkIn: (id) => api.put(`/resource-bookings/${id}/check-in`),
+  checkOut: (id, data) => api.put(`/resource-bookings/${id}/check-out`, data),
+  cancel: (id, data) => api.put(`/resource-bookings/${id}/cancel`, data)
+};
+
+export default api;
