@@ -30,6 +30,7 @@ app.use('/api/plagiarism-reports', require('./routes/plagiarismReportRoutes'));
 app.use('/api/final-submissions', require('./routes/finalSubmissionRoutes'));
 app.use('/api/defenses', require('./routes/defenseRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/research-groups', require('./routes/researchGroupRoutes'));
 app.use('/api/meetings', require('./routes/meetingRoutes'));
 
