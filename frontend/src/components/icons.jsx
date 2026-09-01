@@ -55,6 +55,15 @@ export const IconNotice = (props) => (
   </svg>
 );
 
+export const IconChart = (props) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+    <path d="M3 3v18h18" />
+    <rect x="7" y="12" width="3" height="6" />
+    <rect x="12.5" y="8" width="3" height="10" />
+    <rect x="18" y="4.5" width="3" height="13.5" />
+  </svg>
+);
+
 export const IconAlarm = (props) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
     <circle cx="12" cy="13" r="8" />
