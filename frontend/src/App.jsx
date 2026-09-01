@@ -18,6 +18,9 @@ import FinalSubmission from './pages/FinalSubmission';
 import DefenseSchedule from './pages/DefenseSchedule';
 import Notifications from './pages/Notifications';
 import Analytics from './pages/Analytics';
+import Publications from './pages/Publications';
+import ConferenceParticipation from './pages/ConferenceParticipation';
+import EquipmentBooking from './pages/EquipmentBooking';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -67,6 +70,7 @@ const AppRoutes = () => (
     <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
 
     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+    <Route path="/equipment-booking" element={<ProtectedRoute><EquipmentBooking /></ProtectedRoute>} />
     <Route path="/proposals" element={<ProtectedRoute><Proposals /></ProtectedRoute>} />
     <Route path="/notices" element={<ProtectedRoute><Notices /></ProtectedRoute>} />
     <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
@@ -82,7 +86,8 @@ const AppRoutes = () => (
     <Route path="/my-thesis/:id/plagiarism" element={<ProtectedRoute><PlagiarismReports /></ProtectedRoute>} />
     <Route path="/my-thesis/:id/final-submission" element={<ProtectedRoute><FinalSubmission /></ProtectedRoute>} />
     <Route path="/my-thesis/:id/defense" element={<ProtectedRoute><DefenseSchedule /></ProtectedRoute>} />
-
+    <Route path="/my-thesis/:id/publications" element={<ProtectedRoute><Publications /></ProtectedRoute>} />
+    <Route path="/my-thesis/:id/conferences" element={<ProtectedRoute><ConferenceParticipation /></ProtectedRoute>} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 );

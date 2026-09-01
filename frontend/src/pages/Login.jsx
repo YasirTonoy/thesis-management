@@ -75,20 +75,27 @@ const Login = () => {
 
             <div className="mt-6 pt-4 border-t border-slate-200">
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Quick Test Logins</p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setFormData({ email: 'student@test.com', password: 'password123' })}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-1.5 px-2 rounded border border-slate-300 font-medium transition"
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-1.5 px-2 rounded border border-slate-300 font-medium transition text-center"
                 >
                   Student Fill
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ email: 'supervisor@test.com', password: 'password123' })}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-1.5 px-2 rounded border border-slate-300 font-medium transition"
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-1.5 px-2 rounded border border-slate-300 font-medium transition text-center"
                 >
                   Supervisor Fill
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ email: 'admin@test.com', password: 'password123' })}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-1.5 px-2 rounded border border-slate-300 font-medium transition text-center"
+                >
+                  Admin Fill
                 </button>
               </div>
             </div>

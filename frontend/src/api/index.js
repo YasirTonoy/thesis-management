@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) || 'http://localhost:5001/api';
+const API_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -74,7 +74,15 @@ export const materialAPI = {
   addVersion: (materialId, formData) => api.post(`/materials/${materialId}/versions`, formData),
   getAll: (proposalId) => api.get('/materials', { params: { proposalId } })
 };
+export const publicationAPI = {
+  submit: (formData) => api.post('/publications', formData),
+  getAll: (proposalId) => api.get('/publications', { params: { proposalId } })
+};
 
+export const conferenceAPI = {
+  submit: (formData) => api.post('/conferences', formData),
+  getAll: (proposalId) => api.get('/conferences', { params: { proposalId } })
+};
 // ---- Feature: Thesis Version Control & Revision History ----
 export const thesisVersionAPI = {
   // formData fields: proposalId, changeSummary, file
@@ -148,3 +156,23 @@ export const meetingAPI = {
   cancel: (id) => api.put(`/meetings/${id}/cancel`),
   complete: (id, data) => api.put(`/meetings/${id}/complete`, data)
 };
+
+export const labResourceAPI = {
+  getAll: (params) => api.get('/lab-resources', { params }),
+  getById: (id) => api.get(`/lab-resources/${id}`),
+  create: (data) => api.post('/lab-resources', data),
+  update: (id, data) => api.put(`/lab-resources/${id}`, data),
+  delete: (id) => api.delete(`/lab-resources/${id}`),
+  getAnalytics: () => api.get('/lab-resources/analytics/stats')
+};
+
+export const resourceBookingAPI = {
+  getAll: (params) => api.get('/resource-bookings', { params }),
+  create: (data) => api.post('/resource-bookings', data),
+  respond: (id, data) => api.put(`/resource-bookings/${id}/respond`, data),
+  checkIn: (id) => api.put(`/resource-bookings/${id}/check-in`),
+  checkOut: (id, data) => api.put(`/resource-bookings/${id}/check-out`, data),
+  cancel: (id, data) => api.put(`/resource-bookings/${id}/cancel`, data)
+};
+
+export default api;

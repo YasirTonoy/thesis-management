@@ -8,9 +8,11 @@ const UNREAD_POLL_MS = 60000;
 
 /** Department analytics is faculty-only, matching the API's own access rule. */
 const FACULTY_NAV_ITEMS = [{ to: '/analytics', label: 'Analytics', icon: IconChart, roles: ['supervisor', 'admin'] }];
+import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconEquipment } from './icons';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: IconDashboard },
+  { to: '/equipment-booking', label: '🔬 Lab & Equipment', icon: IconEquipment },
   { to: '/proposals', label: 'Proposals', icon: IconProposal },
   { to: '/research-groups', label: 'Research Groups', icon: IconSupervision },
   { to: '/notices', label: 'Notices', icon: IconNotice },

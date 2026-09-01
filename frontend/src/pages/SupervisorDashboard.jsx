@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { proposalAPI, milestoneAPI, supervisionAPI, progressReportAPI, literatureReviewAPI, thesisMaterialAPI, meetingAPI } from '../api';
 import ProposalList from '../components/ProposalList';
 import MilestoneList from '../components/MilestoneList';
@@ -186,12 +187,20 @@ const SupervisorDashboard = () => {
             </h1>
             <p className="text-slate-500 text-sm mt-0.5">Faculty Thesis Supervision & Milestone Control Center</p>
           </div>
-          <button
-            onClick={() => setShowMilestoneModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 text-xs transition shadow-sm"
-          >
-            + Create Milestone
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/equipment-booking"
+              className="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3.5 py-2 text-xs transition shadow-sm flex items-center gap-1.5"
+            >
+              <span>🔬</span> Lab & Equipment Hub →
+            </Link>
+            <button
+              onClick={() => setShowMilestoneModal(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 text-xs transition shadow-sm"
+            >
+              + Create Milestone
+            </button>
+          </div>
         </div>
       </div>
 
