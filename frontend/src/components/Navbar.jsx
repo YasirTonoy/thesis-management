@@ -1,6 +1,13 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { notificationAPI } from '../api';
+import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconAlarm, IconChart } from './icons';
+
+const UNREAD_POLL_MS = 60000;
+
+/** Department analytics is faculty-only, matching the API's own access rule. */
+const FACULTY_NAV_ITEMS = [{ to: '/analytics', label: 'Analytics', icon: IconChart, roles: ['supervisor', 'admin'] }];
 import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconEquipment } from './icons';
 
 const NAV_ITEMS = [
@@ -15,6 +22,31 @@ const NAV_ITEMS = [
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const navItems = [...NAV_ITEMS, ...FACULTY_NAV_ITEMS.filter((item) => item.roles.includes(user?.role))];
+
+  useEffect(() => {
+    if (!user) return undefined;
+
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await notificationAPI.unreadCount();
+        if (active) setUnreadCount(res.data.unreadCount || 0);
+      } catch {
+        // A failed poll should never break the navbar.
+      }
+    };
+
+    load();
+    const timer = setInterval(load, UNREAD_POLL_MS);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [user, location.pathname]);
 
   return (
     <header className="border-b border-slate-200 bg-white sticky top-0 z-40">
@@ -25,7 +57,7 @@ const Navbar = () => {
         </div>
 
         <nav className="hidden md:flex items-center gap-1 flex-1">
-          {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+          {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -42,6 +74,20 @@ const Navbar = () => {
         </nav>
 
         <div className="flex items-center gap-3">
+          <NavLink
+            to="/notifications"
+            title="Deadline reminders"
+            className={({ isActive }) =>
+              `relative flex items-center p-2 transition-colors ${isActive ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`
+            }
+          >
+            <IconAlarm className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </NavLink>
           <NavLink
             to="/profile"
             className={({ isActive }) =>
@@ -66,7 +112,7 @@ const Navbar = () => {
       </div>
 
       <nav className="flex md:hidden items-center gap-1 px-4 pb-2 overflow-x-auto">
-        {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+        {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}

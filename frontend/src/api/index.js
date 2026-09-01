@@ -119,6 +119,25 @@ export const defenseAPI = {
   recordResult: (defenseId, data) => api.put(`/defenses/${defenseId}/result`, data)
 };
 
+// ---- Feature: Deadline Reminders & Notifications ----
+export const notificationAPI = {
+  getAll: (params) => api.get('/notifications', { params }),
+  unreadCount: () => api.get('/notifications/unread-count'),
+  markRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllRead: () => api.put('/notifications/read-all'),
+  delete: (id) => api.delete(`/notifications/${id}`),
+  sweep: () => api.post('/notifications/sweep')
+};
+
+// ---- Feature: Department Research Analytics ----
+export const analyticsAPI = {
+  overview: (department) => api.get('/analytics/overview', { params: department ? { department } : {} }),
+  downloadCsv: (department) => api.get('/analytics/report.csv', { params: department ? { department } : {}, responseType: 'blob' }),
+  downloadPdf: (department) => api.get('/analytics/report.pdf', { params: department ? { department } : {}, responseType: 'blob' })
+};
+
+export default api;
+
 export const researchGroupAPI = {
   create: (data) => api.post('/research-groups', data),
   getAll: () => api.get('/research-groups'),

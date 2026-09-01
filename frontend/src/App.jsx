@@ -16,6 +16,8 @@ import ThesisVersions from './pages/ThesisVersions';
 import PlagiarismReports from './pages/PlagiarismReports';
 import FinalSubmission from './pages/FinalSubmission';
 import DefenseSchedule from './pages/DefenseSchedule';
+import Notifications from './pages/Notifications';
+import Analytics from './pages/Analytics';
 import Publications from './pages/Publications';
 import ConferenceParticipation from './pages/ConferenceParticipation';
 import EquipmentBooking from './pages/EquipmentBooking';
@@ -71,6 +73,8 @@ const AppRoutes = () => (
     <Route path="/equipment-booking" element={<ProtectedRoute><EquipmentBooking /></ProtectedRoute>} />
     <Route path="/proposals" element={<ProtectedRoute><Proposals /></ProtectedRoute>} />
     <Route path="/notices" element={<ProtectedRoute><Notices /></ProtectedRoute>} />
+    <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+    <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
     <Route path="/research-groups" element={<ProtectedRoute><ResearchGroups /></ProtectedRoute>} />
     <Route path="/supervision" element={<ProtectedRoute><Placeholder title="Supervision" /></ProtectedRoute>} />
     <Route path="/milestones" element={<ProtectedRoute><Placeholder title="Milestones" /></ProtectedRoute>} />
