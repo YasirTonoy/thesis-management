@@ -121,6 +121,13 @@ export const notificationAPI = {
   sweep: () => api.post('/notifications/sweep')
 };
 
+// ---- Feature: Department Research Analytics ----
+export const analyticsAPI = {
+  overview: (department) => api.get('/analytics/overview', { params: department ? { department } : {} }),
+  downloadCsv: (department) => api.get('/analytics/report.csv', { params: department ? { department } : {}, responseType: 'blob' }),
+  downloadPdf: (department) => api.get('/analytics/report.pdf', { params: department ? { department } : {}, responseType: 'blob' })
+};
+
 export default api;
 
 export const researchGroupAPI = {
