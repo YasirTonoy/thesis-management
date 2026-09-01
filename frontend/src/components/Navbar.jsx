@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { notificationAPI } from '../api';
-import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconAlarm } from './icons';
+import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconAlarm, IconChart } from './icons';
 
 const UNREAD_POLL_MS = 60000;
+
+/** Department analytics is faculty-only, matching the API's own access rule. */
+const FACULTY_NAV_ITEMS = [{ to: '/analytics', label: 'Analytics', icon: IconChart, roles: ['supervisor', 'admin'] }];
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: IconDashboard },
@@ -19,6 +22,8 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const navItems = [...NAV_ITEMS, ...FACULTY_NAV_ITEMS.filter((item) => item.roles.includes(user?.role))];
 
   useEffect(() => {
     if (!user) return undefined;
@@ -50,7 +55,7 @@ const Navbar = () => {
         </div>
 
         <nav className="hidden md:flex items-center gap-1 flex-1">
-          {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+          {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -105,7 +110,7 @@ const Navbar = () => {
       </div>
 
       <nav className="flex md:hidden items-center gap-1 px-4 pb-2 overflow-x-auto">
-        {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+        {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
