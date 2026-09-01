@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) || 'http://localhost:5000/api';
+// Port 5001, not 5000: macOS Control Center/AirPlay occupies 5000 and answers requests
+// without CORS headers, which surfaces as a misleading CORS error.
+const API_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) || 'http://localhost:5001/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -135,8 +137,6 @@ export const analyticsAPI = {
   downloadCsv: (department) => api.get('/analytics/report.csv', { params: department ? { department } : {}, responseType: 'blob' }),
   downloadPdf: (department) => api.get('/analytics/report.pdf', { params: department ? { department } : {}, responseType: 'blob' })
 };
-
-export default api;
 
 export const researchGroupAPI = {
   create: (data) => api.post('/research-groups', data),

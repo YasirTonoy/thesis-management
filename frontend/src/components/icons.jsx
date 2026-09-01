@@ -70,6 +70,9 @@ export const IconAlarm = (props) => (
     <path d="M12 9v4l2.5 2" />
     <path d="M5 3L2.5 5.5" />
     <path d="M19 3l2.5 2.5" />
+  </svg>
+);
+
 export const IconEquipment = (props) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
     <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />

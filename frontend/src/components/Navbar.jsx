@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { notificationAPI } from '../api';
-import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconAlarm, IconChart } from './icons';
+import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconAlarm, IconChart, IconEquipment } from './icons';
 
 const UNREAD_POLL_MS = 60000;
 
 /** Department analytics is faculty-only, matching the API's own access rule. */
 const FACULTY_NAV_ITEMS = [{ to: '/analytics', label: 'Analytics', icon: IconChart, roles: ['supervisor', 'admin'] }];
-import { IconDashboard, IconProposal, IconSupervision, IconMilestone, IconNotice, IconLogout, IconEquipment } from './icons';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: IconDashboard },
