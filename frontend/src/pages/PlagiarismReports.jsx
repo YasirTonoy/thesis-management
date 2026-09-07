@@ -43,7 +43,7 @@ const PlagiarismReports = () => {
   const [reviewFormOpenId, setReviewFormOpenId] = useState(null);
   const [reviewComment, setReviewComment] = useState('');
 
-  const API_ORIGIN = (import.meta.env?.VITE_API_URL || 'http://localhost:5001/api').replace('/api', '');
+  const API_ORIGIN = (import.meta.env?.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
 
   const fetchAll = useCallback(async () => {
     setLoading(true);

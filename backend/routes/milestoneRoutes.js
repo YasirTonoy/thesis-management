@@ -7,13 +7,15 @@ const {
   getMilestones,
   submitMilestone,
   reviewMilestone,
-  updateMilestone
+  updateMilestone,
+  deleteMilestone
 } = require('../controllers/milestoneController');
 
-// Supervisor routes
-router.post('/', protect, roleCheck('supervisor'), createMilestone);
-router.put('/:id', protect, roleCheck('supervisor'), updateMilestone);
-router.put('/:id/review', protect, roleCheck('supervisor'), reviewMilestone);
+// Supervisor & Admin routes
+router.post('/', protect, roleCheck('supervisor', 'admin'), createMilestone);
+router.put('/:id', protect, roleCheck('supervisor', 'admin'), updateMilestone);
+router.put('/:id/review', protect, roleCheck('supervisor', 'admin'), reviewMilestone);
+router.delete('/:id', protect, roleCheck('supervisor', 'admin'), deleteMilestone);
 
 // Student routes
 router.put('/:id/submit', protect, roleCheck('student'), submitMilestone);

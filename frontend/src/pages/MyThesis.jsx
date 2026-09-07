@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { proposalAPI, progressReportAPI, materialAPI } from '../api';
+import { proposalAPI, progressReportAPI, materialAPI, commentAPI } from '../api';
 
 const PHASES = [
   { value: 'p1', label: 'Pre Thesis 1' },
@@ -15,12 +15,19 @@ const MyThesis = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const isStudent = user?.role === 'student';
+  const isSupervisor = user?.role === 'supervisor' || user?.role === 'admin';
 
   const [proposal, setProposal] = useState(null);
   const [reports, setReports] = useState([]);
   const [materials, setMaterials] = useState([]);
+  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Comment state
+  const [commentText, setCommentText] = useState('');
+  const [commentCategory, setCommentCategory] = useState(isSupervisor ? 'feedback' : 'general');
+  const [submittingComment, setSubmittingComment] = useState(false);
 
   const [showReportForm, setShowReportForm] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState('');
@@ -38,20 +45,22 @@ const MyThesis = () => {
   const [versionNote, setVersionNote] = useState('');
   const [versionFile, setVersionFile] = useState(null);
 
-  const API_ORIGIN = (import.meta.env?.VITE_API_URL || 'http://localhost:5001/api').replace('/api', '');
+  const API_ORIGIN = (import.meta.env?.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      const [proposalRes, reportsRes, materialsRes] = await Promise.all([
+      const [proposalRes, reportsRes, materialsRes, commentsRes] = await Promise.all([
         proposalAPI.getById(id),
         progressReportAPI.getAll(id),
-        materialAPI.getAll(id)
+        materialAPI.getAll(id),
+        commentAPI.getAll(id).catch(() => ({ data: { data: [] } }))
       ]);
       setProposal(proposalRes.data.data);
       setReports(reportsRes.data.data || []);
       setMaterials(materialsRes.data.data || []);
+      setComments(commentsRes.data.data || []);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load thesis details');
     }
@@ -119,6 +128,34 @@ const MyThesis = () => {
       await fetchAll();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to add new version');
+    }
+  };
+
+  const handlePostComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    setSubmittingComment(true);
+    try {
+      await commentAPI.create({
+        proposalId: id,
+        content: commentText.trim(),
+        category: commentCategory
+      });
+      setCommentText('');
+      await fetchAll();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to post feedback comment');
+    }
+    setSubmittingComment(false);
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('Delete this comment?')) return;
+    try {
+      await commentAPI.delete(commentId);
+      await fetchAll();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to delete comment');
     }
   };
 
@@ -418,6 +455,154 @@ const MyThesis = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </section>
+
+      {/* ── SECTION 3: SUPERVISOR FEEDBACK & COMMENT PORTAL ──────────────── */}
+      <section className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-slate-100 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xl">💬</span>
+              <h2 className="text-lg font-bold text-slate-900">Supervisor Feedback & Discussion Portal</h2>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Direct thesis feedback channel between supervisor and research students.
+            </p>
+          </div>
+          <span className="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full self-start sm:self-auto">
+            {comments.length} message{comments.length === 1 ? '' : 's'}
+          </span>
+        </div>
+
+        {/* New Comment / Feedback Box */}
+        <form onSubmit={handlePostComment} className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-xs font-bold uppercase text-slate-700">
+              {isSupervisor ? 'Post Supervisor Feedback / Directive' : 'Leave a Comment or Question'}
+            </span>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-500 font-semibold">Category:</label>
+              <select
+                value={commentCategory}
+                onChange={(e) => setCommentCategory(e.target.value)}
+                className="text-xs border border-slate-300 rounded px-2.5 py-1 bg-white focus:outline-none focus:border-blue-500"
+              >
+                <option value="feedback">📝 Feedback</option>
+                <option value="action_item">🎯 Action Item</option>
+                <option value="suggestion">💡 Suggestion</option>
+                <option value="question">❓ Question</option>
+                <option value="general">💬 General</option>
+              </select>
+            </div>
+          </div>
+
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            rows="3"
+            placeholder={
+              isSupervisor
+                ? 'Provide evaluation feedback, next milestone directives, or comments on current progress...'
+                : 'Ask questions, share updates with your supervisor, or address feedback points...'
+            }
+            className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:outline-none focus:border-blue-500 resize-none bg-white"
+            required
+          />
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={submittingComment || !commentText.trim()}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2 rounded-lg transition disabled:opacity-50 shadow-sm"
+            >
+              {submittingComment ? 'Posting...' : isSupervisor ? 'Post Official Feedback' : 'Post Comment'}
+            </button>
+          </div>
+        </form>
+
+        {/* Comment Thread List */}
+        {comments.length === 0 ? (
+          <div className="text-center py-10 border border-dashed border-slate-200 rounded-lg text-slate-400 text-xs">
+            No feedback entries posted yet. Start the conversation by posting above!
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {comments.map((cmt) => {
+              const isCommentSupervisor = cmt.authorRole === 'supervisor' || cmt.author?.role === 'supervisor';
+              const isCommentAdmin = cmt.authorRole === 'admin' || cmt.author?.role === 'admin';
+              const canDelete =
+                cmt.author?._id === user?._id ||
+                cmt.author === user?._id ||
+                ['supervisor', 'admin'].includes(user?.role);
+
+              const categoryBadge = {
+                feedback: 'bg-emerald-50 text-emerald-800 border-emerald-300',
+                action_item: 'bg-amber-50 text-amber-800 border-amber-300',
+                suggestion: 'bg-purple-50 text-purple-800 border-purple-300',
+                question: 'bg-blue-50 text-blue-800 border-blue-300',
+                general: 'bg-slate-100 text-slate-700 border-slate-200'
+              }[cmt.category] || 'bg-slate-100 text-slate-700 border-slate-200';
+
+              return (
+                <div
+                  key={cmt._id}
+                  className={`border rounded-lg p-4 space-y-2 transition ${
+                    isCommentSupervisor
+                      ? 'border-blue-200 bg-blue-50/20'
+                      : isCommentAdmin
+                      ? 'border-purple-200 bg-purple-50/10'
+                      : 'border-slate-200 bg-white'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                          isCommentSupervisor ? 'bg-blue-600' : isCommentAdmin ? 'bg-purple-600' : 'bg-slate-800'
+                        }`}
+                      >
+                        {(cmt.authorName || cmt.author?.name || 'U').charAt(0).toUpperCase()}
+                      </div>
+                      <span className="font-bold text-xs text-slate-900">
+                        {cmt.authorName || cmt.author?.name || 'User'}
+                      </span>
+                      {isCommentSupervisor && (
+                        <span className="text-[10px] uppercase font-bold bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                          Supervisor
+                        </span>
+                      )}
+                      {isCommentAdmin && (
+                        <span className="text-[10px] uppercase font-bold bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded">
+                          Admin
+                        </span>
+                      )}
+                      <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${categoryBadge}`}>
+                        {cmt.category?.replace('_', ' ') || 'general'}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                      <span>{new Date(cmt.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span>
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDeleteComment(cmt._id)}
+                          className="hover:text-red-600 font-bold transition ml-1"
+                          title="Delete comment"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap pl-9">
+                    {cmt.content}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         )}
       </section>

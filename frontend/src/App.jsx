@@ -21,6 +21,9 @@ import Analytics from './pages/Analytics';
 import Publications from './pages/Publications';
 import ConferenceParticipation from './pages/ConferenceParticipation';
 import EquipmentBooking from './pages/EquipmentBooking';
+import Milestones from './pages/Milestones';
+import Supervision from './pages/Supervision';
+import Profile from './pages/Profile';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -76,9 +79,9 @@ const AppRoutes = () => (
     <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
     <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
     <Route path="/research-groups" element={<ProtectedRoute><ResearchGroups /></ProtectedRoute>} />
-    <Route path="/supervision" element={<ProtectedRoute><Placeholder title="Supervision" /></ProtectedRoute>} />
-    <Route path="/milestones" element={<ProtectedRoute><Placeholder title="Milestones" /></ProtectedRoute>} />
-    <Route path="/profile" element={<ProtectedRoute><Placeholder title="Profile" /></ProtectedRoute>} />
+    <Route path="/supervision" element={<ProtectedRoute><Supervision /></ProtectedRoute>} />
+    <Route path="/milestones" element={<ProtectedRoute><Milestones /></ProtectedRoute>} />
+    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
     <Route path="/my-thesis/:id" element={<ProtectedRoute><MyThesis /></ProtectedRoute>} />
     <Route path="/my-thesis/:id/literature-review" element={<ProtectedRoute><LiteratureReview /></ProtectedRoute>} />

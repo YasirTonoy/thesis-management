@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { proposalAPI, milestoneAPI, supervisionAPI, progressReportAPI, literatureReviewAPI, thesisMaterialAPI, meetingAPI } from '../api';
+import { proposalAPI, milestoneAPI, supervisionAPI, progressReportAPI, literatureReviewAPI, materialAPI, meetingAPI } from '../api';
 import ProposalList from '../components/ProposalList';
 import MilestoneList from '../components/MilestoneList';
 
@@ -60,7 +60,7 @@ const SupervisorDashboard = () => {
         supervisionAPI.getAll({ active: true }),
         progressReportAPI.getAll(),
         literatureReviewAPI.getAll(),
-        thesisMaterialAPI.getAll(),
+        materialAPI.getAll(),
         meetingAPI.getAll()
       ]);
       
@@ -157,7 +157,7 @@ const SupervisorDashboard = () => {
   };
 
   const handleCancelMeeting = async (meetingId) => {
-    if (!window.confirm('Cancel this meeting?')) return;
+    if (!window.confirm('Are you sure you want to cancel this meeting?\n\nClick OK to confirm cancellation.')) return;
     try {
       await meetingAPI.cancel(meetingId);
       alert('Meeting cancelled.');

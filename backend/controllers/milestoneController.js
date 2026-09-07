@@ -200,10 +200,38 @@ const updateMilestone = async (req, res) => {
   }
 };
 
+// @desc    Delete milestone
+// @route   DELETE /api/milestones/:id
+// @access  Supervisor or Admin
+const deleteMilestone = async (req, res) => {
+  try {
+    const milestone = await Milestone.findById(req.params.id);
+
+    if (!milestone) {
+      return res.status(404).json({ message: 'Milestone not found' });
+    }
+
+    const isAuthorized = milestone.supervisor.toString() === req.user.id || req.user.role === 'admin';
+    if (!isAuthorized) {
+      return res.status(403).json({ message: 'Not authorized to delete this milestone' });
+    }
+
+    await Milestone.findByIdAndDelete(req.params.id);
+
+    res.json({
+      success: true,
+      message: 'Milestone deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createMilestone,
   getMilestones,
   submitMilestone,
   reviewMilestone,
-  updateMilestone
+  updateMilestone,
+  deleteMilestone
 };

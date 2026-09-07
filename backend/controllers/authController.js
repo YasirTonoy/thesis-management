@@ -107,4 +107,86 @@ const getSupervisors = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getMe, getSupervisors };
+const getStudents = async (req, res) => {
+  try {
+    const students = await User.find({ role: 'student' }).select('name email department studentId').sort({ name: 1 });
+    res.json({ success: true, data: students });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const getAllUsers = async (req, res) => {
+  try {
+    const query = {};
+    if (req.query.role) query.role = req.query.role;
+    const users = await User.find(query).select('-password').sort({ name: 1 });
+    res.json({ success: true, data: users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    const { name, department, studentId, researchInterests, bio, officeLocation, phone } = req.body;
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (name) user.name = name;
+    if (department) user.department = department;
+    if (user.role === 'student' && studentId) user.studentId = studentId;
+    if (Array.isArray(researchInterests)) user.researchInterests = researchInterests;
+    if (bio !== undefined) user.bio = bio;
+    if (officeLocation !== undefined) user.officeLocation = officeLocation;
+    if (phone !== undefined) user.phone = phone;
+
+    await user.save();
+
+    const updated = await User.findById(user._id).select('-password');
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Current and new password are required' });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Incorrect current password' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getMe,
+  getSupervisors,
+  getStudents,
+  getAllUsers,
+  updateProfile,
+  updatePassword
+};
+

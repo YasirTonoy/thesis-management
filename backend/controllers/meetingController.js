@@ -138,10 +138,11 @@ const cancelMeeting = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Meeting not found' });
     }
 
-    // Only student or supervisor of this meeting can cancel
+    // Student, supervisor, or admin can cancel
     const isParticipant =
       meeting.student.toString() === req.user.id ||
-      meeting.supervisor.toString() === req.user.id;
+      meeting.supervisor.toString() === req.user.id ||
+      req.user.role === 'admin';
 
     if (!isParticipant) {
       return res.status(403).json({ success: false, message: 'Not authorized' });
@@ -162,7 +163,7 @@ const cancelMeeting = async (req, res) => {
 
 // @desc    Mark meeting as completed
 // @route   PUT /api/meetings/:id/complete
-// @access  Supervisor
+// @access  Supervisor or Admin
 const completeMeeting = async (req, res) => {
   try {
     const meeting = await Meeting.findById(req.params.id);
@@ -170,7 +171,7 @@ const completeMeeting = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Meeting not found' });
     }
 
-    if (meeting.supervisor.toString() !== req.user.id) {
+    if (meeting.supervisor.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
 

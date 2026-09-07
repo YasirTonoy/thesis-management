@@ -21,25 +21,35 @@ const assignSupervisor = async (req, res) => {
       return res.status(404).json({ message: 'Supervisor not found' });
     }
 
-    // Check if student has an approved proposal
-    const approvedProposal = await Proposal.findOne({
-      student: studentId,
-      status: 'approved'
+    // Check if student has a proposal (match submittedBy or studentId in group)
+    const existingProposal = await Proposal.findOne({
+      $or: [
+        { submittedBy: studentId },
+        ...(student.studentId ? [{ 'students.studentId': student.studentId }] : [])
+      ]
     });
 
-    if (!approvedProposal) {
-      return res.status(400).json({ 
-        message: 'Student does not have an approved proposal' 
-      });
+    // If proposal exists, update its supervisor to keep in sync
+    if (existingProposal) {
+      await Proposal.updateMany(
+        {
+          $or: [
+            { submittedBy: studentId },
+            ...(student.studentId ? [{ 'students.studentId': student.studentId }] : [])
+          ]
+        },
+        { supervisor: supervisorId }
+      );
     }
 
-    // Deactivate any existing active supervision
-    await Supervision.findOneAndUpdate(
+    // Deactivate any existing active supervision (save the old one first for reference)
+    const existingSupervision = await Supervision.findOneAndUpdate(
       { student: studentId, isActive: true },
       { 
         isActive: false,
         reassignmentReason: reassignmentReason || 'Reassigned by admin'
-      }
+      },
+      { new: false } // return the OLD document before update
     );
 
     // Create new supervision
@@ -47,12 +57,17 @@ const assignSupervisor = async (req, res) => {
       student: studentId,
       supervisor: supervisorId,
       assignedBy: req.user.id,
-      previousSupervisor: supervision?.supervisor || null
+      previousSupervisor: existingSupervision?.supervisor || null
     });
+
+    const populated = await Supervision.findById(supervision._id)
+      .populate('student', 'name email department studentId')
+      .populate('supervisor', 'name email department')
+      .populate('assignedBy', 'name email');
 
     res.status(201).json({
       success: true,
-      data: supervision
+      data: populated
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -99,16 +114,28 @@ const getSupervisions = async (req, res) => {
 // @access  Admin only
 const reassignSupervisor = async (req, res) => {
   try {
-    const { newSupervisorId, reason } = req.body;
+    const newSupervisorId = req.body.newSupervisorId || req.body.supervisorId;
+    const reason = req.body.reason || req.body.reassignmentReason || 'Reassigned by admin';
+
+    if (!newSupervisorId) {
+      return res.status(400).json({ message: 'New supervisor ID is required' });
+    }
+
     const supervision = await Supervision.findById(req.params.id);
 
     if (!supervision) {
       return res.status(404).json({ message: 'Supervision record not found' });
     }
 
+    // Verify new supervisor exists
+    const supervisor = await User.findOne({ _id: newSupervisorId, role: 'supervisor' });
+    if (!supervisor) {
+      return res.status(404).json({ message: 'New supervisor not found' });
+    }
+
     // Deactivate current supervision
     supervision.isActive = false;
-    supervision.reassignmentReason = reason || 'Reassigned by admin';
+    supervision.reassignmentReason = reason;
     await supervision.save();
 
     // Create new supervision with new supervisor
@@ -117,14 +144,25 @@ const reassignSupervisor = async (req, res) => {
       supervisor: newSupervisorId,
       assignedBy: req.user.id,
       previousSupervisor: supervision.supervisor,
-      reassignmentReason: reason || 'Reassigned by admin'
+      reassignmentReason: reason
     });
+
+    // Update any proposals for this student to reflect the new supervisor
+    await Proposal.updateMany(
+      { submittedBy: supervision.student },
+      { supervisor: newSupervisorId }
+    );
+
+    const populatedNew = await Supervision.findById(newSupervision._id)
+      .populate('student', 'name email department studentId')
+      .populate('supervisor', 'name email department')
+      .populate('assignedBy', 'name email');
 
     res.json({
       success: true,
       data: {
         oldSupervision: supervision,
-        newSupervision: newSupervision
+        newSupervision: populatedNew
       }
     });
   } catch (error) {

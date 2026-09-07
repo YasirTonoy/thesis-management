@@ -35,6 +35,7 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/research-groups', require('./routes/researchGroupRoutes'));
 app.use('/api/meetings', require('./routes/meetingRoutes'));
+app.use('/api/comments', require('./routes/commentRoutes'));
 app.use('/api/lab-resources', require('./routes/labResourceRoutes'));
 app.use('/api/resource-bookings', require('./routes/resourceBookingRoutes'));
 
@@ -59,57 +60,75 @@ const autoSeed = async () => {
     const LabResource = require('./models/LabResource');
     const ResourceBooking = require('./models/ResourceBooking');
 
-    const userCount = await User.countDocuments();
-    let admin, supervisor, student;
+    const bcrypt = require('bcryptjs');
+    const Proposal = require('./models/Proposal');
+    const Supervision = require('./models/Supervision');
+    const Milestone = require('./models/Milestone');
+    const Notice = require('./models/Notice');
 
-    if (userCount === 0) {
-      console.log('🌱 Seeding demo accounts and sample data...');
-      const bcrypt = require('bcryptjs');
-      const Proposal = require('./models/Proposal');
-      const Supervision = require('./models/Supervision');
-      const Milestone = require('./models/Milestone');
-      const ProgressReport = require('./models/ProgressReport');
-      const LiteratureReview = require('./models/LiteratureReview');
-      const Meeting = require('./models/Meeting');
-      const ResearchGroup = require('./models/ResearchGroup');
-      const GroupPost = require('./models/GroupPost');
+    const salt = await bcrypt.genSalt(10);
+    const password = await bcrypt.hash('password123', salt);
 
-      const salt = await bcrypt.genSalt(10);
-      const password = await bcrypt.hash('password123', salt);
-
+    let admin = await User.findOne({ email: 'admin@test.com' });
+    if (!admin) {
       admin = await User.create({ name: 'Admin User', email: 'admin@test.com', password, role: 'admin', department: 'Computer Science & Engineering' });
-      supervisor = await User.create({ name: 'Dr. Sarah Connor', email: 'supervisor@test.com', password, role: 'supervisor', department: 'Computer Science & Engineering' });
-      student = await User.create({ name: 'John Doe', email: 'student@test.com', password, role: 'student', department: 'Computer Science & Engineering', studentId: 'DEMO001' });
+    } else {
+      admin.password = password;
+      await admin.save();
+    }
 
-      const proposal = await Proposal.create({
+    let supervisor = await User.findOne({ email: 'supervisor@test.com' });
+    if (!supervisor) {
+      supervisor = await User.create({ name: 'Dr. Sarah Connor', email: 'supervisor@test.com', password, role: 'supervisor', department: 'Computer Science & Engineering' });
+    } else {
+      supervisor.password = password;
+      await supervisor.save();
+    }
+
+    let student = await User.findOne({ email: 'student@test.com' });
+    if (!student) {
+      student = await User.create({ name: 'John Doe', email: 'student@test.com', password, role: 'student', department: 'Computer Science & Engineering', studentId: 'DEMO001' });
+    } else {
+      student.password = password;
+      await student.save();
+    }
+
+    let proposal = await Proposal.findOne({ submittedBy: student._id });
+    if (!proposal) {
+      proposal = await Proposal.create({
         title: 'AI-Based Thesis Management System',
         description: 'A comprehensive management system leveraging machine learning to match supervisors and automate milestone tracking.',
-        supervisor: supervisor._id || supervisor.name,
+        supervisor: supervisor._id,
         students: [{ name: student.name, studentId: student.studentId }],
         submittedBy: student._id,
         status: 'approved',
         reviewedBy: supervisor._id
       });
+    }
 
-      const supervision = await Supervision.create({ student: student._id, supervisor: supervisor._id, assignedBy: admin._id, isActive: true, reassignmentReason: '' });
+    let supervision = await Supervision.findOne({ student: student._id });
+    if (!supervision) {
+      supervision = await Supervision.create({ student: student._id, supervisor: supervisor._id, assignedBy: admin._id, isActive: true, reassignmentReason: '' });
+    }
 
+    const milestoneCount = await Milestone.countDocuments({ student: student._id });
+    if (milestoneCount === 0) {
       await Milestone.create([
         { supervision: supervision._id, student: student._id, supervisor: supervisor._id, title: 'Sprint 1 - System Architecture & Proposal Submission', description: 'Complete database models, backend API routes, and basic frontend pages.', dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), status: 'pending' },
         { supervision: supervision._id, student: student._id, supervisor: supervisor._id, title: 'Sprint 2 - Frontend Integration & Feedback System', description: 'Connect UI components with backend REST API and test user authentication.', dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), status: 'pending' }
       ]);
+    }
 
-      const Notice = require('./models/Notice');
+    const noticeCount = await Notice.countDocuments({ postedBy: supervisor._id });
+    if (noticeCount === 0) {
       await Notice.create({
         title: 'Welcome to the Fall 2026 Thesis Cycle',
         content: 'Please make sure your proposal is submitted before the department deadline. Reach out if you have questions about scope or supervision availability.',
         postedBy: supervisor._id
       });
-
-      console.log('✨ Seeded: admin@test.com / supervisor@test.com / student@test.com (password: password123)');
-    } else {
-      supervisor = await User.findOne({ role: 'supervisor' });
-      student = await User.findOne({ role: 'student' });
     }
+
+    console.log('✨ Demo accounts verified: admin@test.com / supervisor@test.com / student@test.com (password: password123)');
 
     // Seed / Sync Lab Resources
     const seedRoboticsAndLabs = async () => {

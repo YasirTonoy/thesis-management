@@ -8,7 +8,8 @@ const literatureReviewSchema = new mongoose.Schema(
     author: { type: String, required: [true, 'Author is required'], trim: true },
     year: { type: String, trim: true, default: '' },
     journal: { type: String, trim: true, default: '' },
-    review: { type: String, required: [true, 'Review is required'], trim: true }
+    review: { type: String, required: [true, 'Review is required'], trim: true },
+    supervisorFeedback: { type: String, default: '' }
   },
   { timestamps: true }
 );

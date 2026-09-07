@@ -18,11 +18,28 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Auto-logout on 401 (expired or invalid token)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   me: () => api.get('/auth/me'),
-  getSupervisors: () => api.get('/auth/supervisors')
+  updateProfile: (data) => api.put('/auth/profile', data),
+  updatePassword: (data) => api.put('/auth/password', data),
+  getSupervisors: () => api.get('/auth/supervisors'),
+  getStudents: () => api.get('/auth/students'),
+  getAllUsers: (params) => api.get('/auth/users', { params })
 };
 
 export const proposalAPI = {
@@ -59,13 +76,19 @@ export const noticeAPI = {
 export const progressReportAPI = {
   // formData must be a FormData instance (fields: proposalId, phase, description, document?)
   submit: (formData) => api.post('/progress-reports', formData),
-  getAll: (proposalId) => api.get('/progress-reports', { params: { proposalId } })
+  getAll: (proposalId) => proposalId
+    ? api.get('/progress-reports', { params: { proposalId } })
+    : api.get('/progress-reports'),
+  review: (id, data) => api.put(`/progress-reports/${id}/review`, data)
 };
 
 // ---- Feature: Literature Review ----
 export const literatureReviewAPI = {
   submit: (data) => api.post('/literature-reviews', data),
-  getAll: (proposalId) => api.get('/literature-reviews', { params: { proposalId } })
+  getAll: (proposalId) => proposalId
+    ? api.get('/literature-reviews', { params: { proposalId } })
+    : api.get('/literature-reviews'),
+  feedback: (id, data) => api.put(`/literature-reviews/${id}/feedback`, data)
 };
 
 // ---- Feature: Thesis Materials / Datasets ----
@@ -155,6 +178,13 @@ export const meetingAPI = {
   respond: (id, data) => api.put(`/meetings/${id}/respond`, data),
   cancel: (id) => api.put(`/meetings/${id}/cancel`),
   complete: (id, data) => api.put(`/meetings/${id}/complete`, data)
+};
+
+// ---- Feature: Supervisor Feedback & Comment Portal ----
+export const commentAPI = {
+  getAll: (proposalId) => api.get('/comments', { params: { proposalId } }),
+  create: (data) => api.post('/comments', data),
+  delete: (id) => api.delete(`/comments/${id}`)
 };
 
 export const labResourceAPI = {
